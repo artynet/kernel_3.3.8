@@ -120,6 +120,7 @@ enum ath79_mach_type {
 	ATH79_MACH_LININO_YUN,		/* Linino Yun */
 	ATH79_MACH_LININO_ONE,		/* Linino One */
 	ATH79_MACH_LININO_FREEDOG,	/* Linino Freedog */
+	ATH79_MACH_LININO_CHOWCHOW,	/* Linino CHOWCHOW */
 };
 
 #endif /* _ATH79_MACHTYPE_H */
