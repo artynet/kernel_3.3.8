@@ -16,6 +16,7 @@
 #include <linux/ar8216_platform.h>
 
 #include <asm/mach-ath79/ar71xx_regs.h>
+#include <asm/mach-ath79/mach-linino.h>
 
 #include "common.h"
 #include "dev-ap9x-pci.h"
@@ -100,8 +101,10 @@ static struct mdio_board_info db120_mdio0_info[] = {
 
 static void __init chowchow_setup(void)
 {
-	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *ee = (u8 *) KSEG1ADDR(0x1fff1000);
+	//u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
+	//u8 *ee = (u8 *) KSEG1ADDR(0x1fff1000);
+	u8 *art = (u8 *) KSEG1ADDR(0x1fff0000);
+	static u8 mac[6];
 
 	ath79_register_m25p80(NULL);
 
@@ -110,7 +113,12 @@ static void __init chowchow_setup(void)
 	ath79_register_gpio_keys_polled(-1, CHOWCHOW_KEYS_POLL_INTERVAL,
 					 ARRAY_SIZE(chowchow_gpio_keys),
 					 chowchow_gpio_keys);
-	ath79_register_wmac(ee, mac);
+
+	ath79_init_mac(mac, art + DS_WMAC_MAC_OFFSET, -1);
+	ath79_register_wmac(art + DS_CALDATA_OFFSET, mac);
+
+	ath79_init_mac(mac, art + DS_WMAC_MAC_OFFSET, -2);
+	ap91_pci_init(art + DS_PCIE_CALDATA_OFFSET, mac);
 
 	ath79_setup_ar934x_eth_cfg(AR934X_ETH_CFG_RGMII_GMAC0 |
 				   AR934X_ETH_CFG_SW_ONLY_MODE);
@@ -118,7 +126,7 @@ static void __init chowchow_setup(void)
 	ath79_register_mdio(1, 0x0);
 	ath79_register_mdio(0, 0x0);
 
-	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 1);
+	ath79_init_mac(ath79_eth0_data.mac_addr, art + DS_WMAC_MAC_OFFSET, -2);
 
 	mdiobus_register_board_info(db120_mdio0_info,
 				    ARRAY_SIZE(db120_mdio0_info));
