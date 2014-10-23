@@ -25,6 +25,7 @@
 #include "dev-leds-gpio.h"
 #include "dev-m25p80.h"
 #include "dev-spi.h"
+#include "dev-usb.h"
 #include "dev-wmac.h"
 #include "machtypes.h"
 
@@ -113,6 +114,8 @@ static void __init chowchow_setup(void)
 	ath79_register_gpio_keys_polled(-1, CHOWCHOW_KEYS_POLL_INTERVAL,
 					 ARRAY_SIZE(chowchow_gpio_keys),
 					 chowchow_gpio_keys);
+	pr_info("mach-linino: enabling USB Controller");
+	ath79_register_usb();
 
 	ath79_init_mac(mac, art + DS_WMAC_MAC_OFFSET, -1);
 	ath79_register_wmac(art + DS_CALDATA_OFFSET, mac);
