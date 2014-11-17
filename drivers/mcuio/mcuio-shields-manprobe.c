@@ -52,6 +52,8 @@ int shld_register(struct shld_probe_info *info)
 	struct mcuio_device *mdev;
 	struct mcuio_device *hc;
 
+	/* FIXME shld_register always acts on bus=0
+	 * (only one bus is supported at present) */
 	hc = mcuio_bus_find_hc(0);
 	if (IS_ERR(hc))
 		return -ENODEV;
