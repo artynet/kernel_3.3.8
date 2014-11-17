@@ -163,13 +163,43 @@ static struct mcuio_driver mcuio_lucky_driver = {
 	.remove = mcuio_lucky_remove,
 };
 
+
+static int i2cdev_notifier_call(struct notifier_block *nb, unsigned long action,
+			 void *data)
+{
+	struct mcuio_shld_i2c_info *i;
+	struct i2c_client *c = to_i2c_client(data);
+	int cnt;
+
+	if (action == BUS_NOTIFY_DEL_DEVICE) {
+		for (cnt = 0; cnt < ARRAY_SIZE(i2c_lst); cnt++) {
+			i = &i2c_lst[cnt];
+			if (i->i2c_client == to_i2c_client(data))
+				i->i2c_client = NULL;
+		}
+	}
+	return 0;
+}
+
+static struct notifier_block i2cdev_notifier = {
+	.notifier_call = i2cdev_notifier_call,
+};
+
 static int __init mcuio_lucky_init(void)
 {
+	int ret;
+
+	/* Keep track of devices which will be added or removed later */
+	ret = bus_register_notifier(&i2c_bus_type, &i2cdev_notifier);
+	if (ret)
+		return ret;
+
 	return mcuio_driver_register(&mcuio_lucky_driver, THIS_MODULE);
 }
 
 static void __exit mcuio_lucky_exit(void)
 {
+	bus_unregister_notifier(&i2c_bus_type, &i2cdev_notifier);
 	return mcuio_driver_unregister(&mcuio_lucky_driver);
 }
 
