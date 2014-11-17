@@ -45,7 +45,6 @@ config MCUIO_DOGOLED_SHIELD
 
 config MCUIO_SHIELDS_MANUAL_PROBE
 	tristate "mcuio shields manual probe"
-	depends on (MCUIO_LUCKY_SHIELD || MCUIO_DIGITALIO_SHIELD)
 	default y
 	help
 	  Since autoprobe of mcuio shields is not implemented yet, this option
