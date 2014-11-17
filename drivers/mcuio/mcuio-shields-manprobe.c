@@ -14,6 +14,7 @@
 #include <linux/slab.h>
 #include <linux/ctype.h>
 #include <linux/device.h>
+#include <linux/err.h>
 #include <linux/mcuio.h>
 #include <linux/mcuio_ids.h>
 
@@ -59,7 +60,7 @@ int shld_register(struct shld_probe_info *info)
 	mdev->device = info->dev_nr;
 
 	hc = mcuio_bus_find_hc(mdev->bus);
-	if (!hc)
+	if (IS_ERR(hc))
 		return -ENODEV;
 
 	pr_debug("mcuio shield: device = 0x%04x, vendor = 0x%04x, "
