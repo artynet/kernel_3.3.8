@@ -52,16 +52,16 @@ int shld_register(struct shld_probe_info *info)
 	struct mcuio_device *mdev;
 	struct mcuio_device *hc;
 
+	hc = mcuio_bus_find_hc(0);
+	if (IS_ERR(hc))
+		return -ENODEV;
+
 	mdev = kzalloc(sizeof(*mdev), GFP_KERNEL);
 	if (!mdev)
 		return -ENOMEM;
 
 	mdev->id = info->mdev_id;
 	mdev->device = info->dev_nr;
-
-	hc = mcuio_bus_find_hc(mdev->bus);
-	if (IS_ERR(hc))
-		return -ENODEV;
 
 	pr_debug("mcuio shield: device = 0x%04x, vendor = 0x%04x, "
 		 "class = 0x%04x\n", mdev->id.device,
