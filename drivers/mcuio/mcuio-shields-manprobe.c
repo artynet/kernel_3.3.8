@@ -120,13 +120,10 @@ static ssize_t show_shld_list(struct device *dev, struct device_attribute *attr,
 	struct shld_probe_info *i;
 	buf[0] = '\0';
 	for (i = shld_list; i->name; i++) {
-		if (i->probed)
-			strcat(buf, "* ");
-		else
-			strcat(buf, "  ");
 		strcat(buf, i->name);
-		strcat(buf, "\n");
+		strcat(buf, "\t");
 	}
+	strcat(buf, "\n");
 	return strlen(buf);
 }
 
