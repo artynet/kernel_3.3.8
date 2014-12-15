@@ -308,16 +308,18 @@ static int mcuio_gpio_probe(struct mcuio_device *mdev)
 	}
 	g->chip.names = (const char *const *)names_ptr;
 
+	g->irq_base = irq_alloc_descs(-1, 0, g->chip.ngpio, 0);
+	if (g->irq_base < 0) {
+		dev_err(&mdev->dev, "could not allocate irq descriptors ret=%d\n",
+			g->irq_base);
+		return -ENOMEM;
+	}
+
 	pr_debug("%s: max gpios = %d\n", __func__, ARCH_NR_GPIOS);
 	ret = gpiochip_add(&g->chip);
 	if (ret) {
 		pr_err("Error %d adding gpiochip\n", ret);
 		return ret;
-	}
-	g->irq_base = irq_alloc_descs(-1, 0, g->chip.ngpio, 0);
-	if (g->irq_base < 0) {
-		dev_err(&mdev->dev, "could not allocate irq descriptors\n");
-		return -ENOMEM;
 	}
 	for (i = 0; i < g->chip.ngpio; i++) {
 		int irq = i + g->irq_base;
