@@ -101,6 +101,8 @@ static const struct mcuio_device_id dogoled_drv_ids[] = {
 	{
 		.vendor = MCUIO_VENDOR_DOGHUNTER,
 		.device = MCUIO_DEVICE_DOGOLED_SHIELD,
+		.class = MCUIO_CLASS_SHIELD,
+		.class_mask = 0xffff,
 	},
 	/* Terminator */
 	{

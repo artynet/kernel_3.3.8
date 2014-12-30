@@ -146,6 +146,8 @@ static const struct mcuio_device_id lucky_drv_ids[] = {
 	{
 		.vendor = MCUIO_VENDOR_DOGHUNTER,
 		.device = MCUIO_DEVICE_LUCKY_SHIELD,
+		.class = MCUIO_CLASS_SHIELD,
+		.class_mask = 0xffff,
 	},
 	/* Terminator */
 	{
