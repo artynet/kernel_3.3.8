@@ -43,6 +43,7 @@ static unsigned short sht21_addr = 0x40;
 static unsigned short ssd1307_addr = 0x3c;
 static unsigned short mma8491_addr = 0x55;
 static unsigned int mma8491_rst = 200;
+static unsigned short bme280_addr = 0x77;
 module_param(pca9555_base, uint, 0644);
 module_param(pca9555_addr, ushort, 0644);
 module_param(mpl3115_addr, ushort, 0644);
@@ -51,6 +52,7 @@ module_param(sht21_addr, ushort, 0644);
 module_param(ssd1307_addr, ushort, 0644);
 module_param(mma8491_addr, ushort, 0644);
 module_param(mma8491_rst, uint, 0644);
+module_param(bme280_addr, uint, 0644);
 
 static struct ssd1307_platform_data ssd1307_plat = {
 	.type = SSD1307_TYPE_1306,
@@ -70,6 +72,7 @@ static struct mcuio_shld_i2c_info i2c_lst[] = {
 	MCUIO_SHLD_I2C_DEV("mag3110", &mag3110_addr, NULL, -1),
 	MCUIO_SHLD_I2C_DEV("sht21", &sht21_addr, NULL, -1),
 	MCUIO_SHLD_I2C_DEV("ssd1307fb", &ssd1307_addr, &ssd1307_plat, -1),
+	MCUIO_SHLD_I2C_DEV("bme280", &bme280_addr, NULL, -1),
 };
 
 static int mcuio_lucky_probe(struct mcuio_device *mdev)
