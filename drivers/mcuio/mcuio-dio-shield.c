@@ -46,7 +46,7 @@ static int mcuio_dio_probe(struct mcuio_device *mdev)
 {
 	struct mcuio_shld_i2c_info *i;
 	int cnt;
-
+	int ret;
 	struct mcuio_shld_data *data;
 
 	dev_dbg(&mdev->dev, "%s entered\n", __func__);
@@ -74,6 +74,16 @@ static int mcuio_dio_probe(struct mcuio_device *mdev)
 	for (cnt = 0; cnt < data->i2c_cnt; cnt++) {
 		i = &data->i2c_info[cnt];
 		i->info.addr = *i->paddr;
+
+		/* HACK this is needed to enable pullup */
+		ret = devm_gpio_request_one(&mdev->dev, i->gpio_irq, GPIOF_DIR_IN,
+				    "digitalio-shield");
+		if (ret < 0)
+			return ret;
+		gpio_direction_output(i->gpio_irq, 1);
+		gpio_direction_input(i->gpio_irq);
+		devm_gpio_free(&mdev->dev, i->gpio_irq);
+
 		i->info.irq = (i->gpio_irq >= 0) ?
 			gpio_to_irq(i->gpio_irq) : 0;
 
