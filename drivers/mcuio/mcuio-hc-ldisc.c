@@ -68,6 +68,7 @@ static int mcuio_ldisc_open(struct tty_struct *tty)
 		return -ENOMEM;
 	priv->dev = dev;
 	tty->disc_data = priv;
+	tty->receive_room = PSIZE;
 	return 0;
 }
 
