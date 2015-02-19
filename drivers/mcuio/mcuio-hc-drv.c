@@ -199,10 +199,15 @@ static void __request_timeout(struct work_struct *work)
 {
 	struct mcuio_request *r =
 		container_of(work, struct mcuio_request, to_work.work);
+
+	/* A reply has been received while the timeout was occurring */
+	if (r->status != -ETIMEDOUT)
+		return;
+	if (mcuio_request_is_incoming(r))
+		return;
+	__dequeue_request(r);
 	if (r->cb)
 		r->cb(r);
-	if (!mcuio_request_is_incoming(r))
-		__dequeue_request(r);
 }
 
 static int __write_message(struct regmap *map, const u32 *ptr, int count)
