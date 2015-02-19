@@ -106,7 +106,7 @@ static void mcuio_ldisc_receive_buf(struct tty_struct *tty,
 		WARN_ON(1);
 		return;
 	}
-	for (i = 0; i < count; i++)
+	for (i = 0; fp && i < count; i++)
 		if (fp[i]) {
 			pr_err("%s: flags for char %d = 0x%02x\n",
 			       __func__, i, (u8)fp[i]);
