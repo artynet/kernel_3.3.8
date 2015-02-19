@@ -254,7 +254,7 @@ static int __do_request(struct mcuio_hc_data *data)
 	/* Schedule timeout */
 	INIT_DELAYED_WORK(&r->to_work, __request_timeout);
 	/* FIXME: WHAT IS THE CORRECT DELAY ? */
-	schedule_delayed_work(&r->to_work, HZ/10);
+	schedule_delayed_work(&r->to_work, 2*HZ);
 	if (__write_message(map, buf, 4) < 0) {
 		dev_err(&mdev->dev, "error writing to output fifo");
 		goto regmap_error;
