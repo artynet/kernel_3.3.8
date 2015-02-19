@@ -324,7 +324,6 @@ static struct mcuio_request *__find_request(struct mcuio_device *hc,
 	struct mcuio_request *r;
 	struct mcuio_hc_data *data = dev_get_drvdata(&hc->dev);
 
-	mutex_lock(&data->lock);
 	list_for_each_entry(r, &data->pending_requests, list) {
 		if ((mcuio_packet_type(p) & mcuio_actual_type_mask) ==
 		    (r->type & mcuio_actual_type_mask) &&
@@ -332,12 +331,9 @@ static struct mcuio_request *__find_request(struct mcuio_device *hc,
 		    mcuio_packet_dev(p) == r->dev &&
 		    mcuio_packet_func(p) == r->func &&
 		    (mcuio_packet_offset(p) & r->offset_mask) ==
-		    (r->offset & r->offset_mask)) {
-			mutex_unlock(&data->lock);
+		    (r->offset & r->offset_mask))
 			return r;
-		}
 	}
-	mutex_unlock(&data->lock);
 	return NULL;
 }
 
@@ -376,15 +372,18 @@ static int __receive_messages(void *__data)
 				continue;
 			}
 		}
+		mutex_lock(&data->lock);
 		r = __find_request(hc, p);
 		if (!r) {
 			dev_err(&hc->dev, "unexpected reply");
 			dump_packet(p);
+			mutex_unlock(&data->lock);
 			continue;
 		}
 		r->status = mcuio_packet_is_error(p);
 		pr_debug("%s %d, r->status = %d\n", __func__, __LINE__,
 			 r->status);
+		mutex_unlock(&data->lock);
 		cancel_delayed_work_sync(&r->to_work);
 		if (mcuio_packet_is_reply(p)) {
 			if (mcuio_packet_is_read(p))
