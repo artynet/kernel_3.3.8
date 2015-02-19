@@ -165,6 +165,8 @@ static struct regmap_bus regmap_mcuio = {
 	.write = regmap_mcuio_write,
 	.read = regmap_mcuio_read,
 	.free_context = regmap_mcuio_free_context,
+	.reg_format_endian_default = REGMAP_ENDIAN_NATIVE,
+	.val_format_endian_default = REGMAP_ENDIAN_NATIVE,
 };
 
 static struct regmap_mcuio_context *
