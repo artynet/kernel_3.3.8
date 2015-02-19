@@ -393,10 +393,10 @@ static int __receive_messages(void *__data)
 			mcuio_request_set_fill(r, mcuio_packet_is_fill_data(p));
 			__copy_data(r->data, p, 1);
 		}
-		if (r->cb)
-			r->cb(r);
 		if (!mcuio_request_is_incoming(r))
 			__dequeue_request(r);
+		if (r->cb)
+			r->cb(r);
 	}
 	return 0;
 }
