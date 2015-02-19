@@ -104,6 +104,7 @@ static int regmap_mcuio_read(void *context,
 {
 	struct regmap_mcuio_context *ctx = context;
 	struct mcuio_request r;
+	union mcuio_packet_data data;
 	u32 offset = *(u32 *)reg;
 	int ret = 0;
 	unsigned t;
@@ -137,6 +138,7 @@ static int regmap_mcuio_read(void *context,
 		}
 		mcuio_init_request(&r, ctx->hc, ctx->dev, ctx->func, t,
 				   fill, offset, 0xffff);
+		r.data = &data;
 		ret = mcuio_submit_request(&r);
 		if (ret == -ETIMEDOUT) {
 			retries--;
