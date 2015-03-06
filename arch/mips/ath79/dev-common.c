@@ -68,14 +68,37 @@ static struct resource ar933x_uart_resources[] = {
 	},
 };
 
-static struct ar933x_uart_platform_data ar933x_uart_data;
+static struct ar933x_uart_platform_data ar93xx_uart_data;
 static struct platform_device ar933x_uart_device = {
 	.name		= "ar933x-uart",
 	.id		= -1,
 	.resource	= ar933x_uart_resources,
 	.num_resources	= ARRAY_SIZE(ar933x_uart_resources),
 	.dev = {
-		.platform_data	= &ar933x_uart_data,
+		.platform_data	= &ar93xx_uart_data,
+	},
+};
+
+static struct resource ar934x_uart_resources[] = {
+	{
+		.start	= AR934X_UART_HS_BASE,
+		.end	= AR934X_UART_HS_BASE + AR71XX_UART_SIZE - 1,
+		.flags	= IORESOURCE_MEM,
+	},
+	{
+		.start	= ATH79_MISC_IRQ(6),
+		.end	= ATH79_MISC_IRQ(6),
+		.flags	= IORESOURCE_IRQ,
+	},
+};
+
+static struct platform_device ar934x_uart_device = {
+	.name		= "ar933x-uart",
+	.id		= -1,
+	.resource	= ar934x_uart_resources,
+	.num_resources	= ARRAY_SIZE(ar934x_uart_resources),
+	.dev = {
+		.platform_data	= &ar93xx_uart_data,
 	},
 };
 
@@ -99,14 +122,19 @@ void __init ath79_register_uart(void)
 	if (soc_is_ar71xx() ||
 	    soc_is_ar724x() ||
 	    soc_is_ar913x() ||
-	    soc_is_ar934x() ||
 	    soc_is_qca955x()) {
 		ath79_uart_data[0].uartclk = clk_get_rate(clk);
 		platform_device_register(&ath79_uart_device);
 	} else if (soc_is_ar933x()) {
-		ar933x_uart_data.uartclk = clk_get_rate(clk);
+		ar93xx_uart_data.uartclk = clk_get_rate(clk);
 		platform_device_register(&ar933x_uart_device);
-	} else {
+	} else if (soc_is_ar934x()) {
+		ath79_uart_data[0].uartclk = clk_get_rate(clk);
+		platform_device_register(&ath79_uart_device);
+		ar93xx_uart_data.uartclk = clk_get_rate(clk);
+		platform_device_register(&ar934x_uart_device);
+	}
+	else {
 		BUG();
 	}
 }
