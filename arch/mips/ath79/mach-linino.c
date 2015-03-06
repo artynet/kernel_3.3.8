@@ -115,15 +115,10 @@ static struct spi_board_info linino_spi_info[] = {
 static void ds_register_spi(void) {
 	pr_info("mach-linino: enabling GPIO SPI Controller");
 
- 	#if defined(LININO_FREEDOG)
-        /* Enable level shifter on SPI signals */
-        gpio_set_value(DS_GPIO_OE, 1);
-	#else	
 	/* Enable level shifter on SPI signals */
 	gpio_set_value(DS_GPIO_OE, 1);
 	/* Enable level shifter on AVR interrupt */
 	gpio_set_value(DS_GPIO_OE2, 1);
-	#endif
 	/* Register SPI devices */
 	spi_register_board_info(linino_spi_info, ARRAY_SIZE(linino_spi_info));
 	/* Register GPIO SPI controller */

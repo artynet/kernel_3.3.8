@@ -690,13 +690,29 @@ config ATH79_MACH_LININO_FREEDOG
 config ATH79_MACH_LININO_CHOWCHOW
 	bool "Linino Chowchow support"
 	select SOC_AR934X
-	select ATH79_DEV_AP9X_PCI if PCI
 	select ATH79_DEV_ETH
 	select ATH79_DEV_GPIO_BUTTONS
 	select ATH79_DEV_LEDS_GPIO
 	select ATH79_DEV_M25P80
 	select ATH79_DEV_USB
 	select ATH79_DEV_WMAC
+	help
+		Say 'Y' here if you want your kernel to support
+		Linino Chowchow.
+
+config ATH79_MACH_LININO_CHIWAWA
+	bool "Linino Chiwawa support"
+	select SOC_AR933X
+	select ATH79_DEV_ETH
+	select ATH79_DEV_GPIO_BUTTONS
+	select ATH79_DEV_LEDS_GPIO
+	select ATH79_DEV_M25P80
+	select ATH79_DEV_USB
+	select ATH79_DEV_WMAC
+	help
+		Say 'Y' here if you want your kernel to support
+		Linino Chiwawa.
+
 endmenu
 
 config SOC_AR71XX
