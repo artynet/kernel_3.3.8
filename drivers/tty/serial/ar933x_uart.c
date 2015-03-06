@@ -47,6 +47,7 @@ struct ar933x_uart_port {
 	unsigned int		ier;	/* shadow Interrupt Enable Register */
 	unsigned int		min_baud;
 	unsigned int		max_baud;
+	struct ar933x_uart_clk_params *clkparams;
 };
 
 static inline unsigned int ar933x_uart_read(struct ar933x_uart_port *up,
@@ -191,34 +192,30 @@ static unsigned long ar933x_uart_get_baud(unsigned int clk,
 	return t;
 }
 
-#define UART_BAUDRATE_COMP_MEGA32U4
-
-static void ar933x_uart_get_scale_step(unsigned int clk,
+static void ar933x_uart_get_scale_step(struct ar933x_uart_port *up,
 				       unsigned int baud,
 				       unsigned int *scale,
 				       unsigned int *step)
 {
 	unsigned int tscale;
 	long min_diff;
+	unsigned int clk = up->port.uartclk;
 
-#ifdef UART_BAUDRATE_COMP_MEGA32U4
-	/* Fix timing issues on Atmega32U4 w/16Mhz oscillator */
-	if (baud == 115200) {
-		*scale = 0x000C;
-		*step  = 0x2000;
-		return;
+	struct ar933x_uart_clk_params *clkparams = up->clkparams;
+
+	/* If fixed values for scale and step are defined for this baudrate,
+	 * use them */
+	while (clkparams && clkparams->baudrate) {
+		if (baud == clkparams->baudrate) {
+			*scale = clkparams->scale;
+			*step = clkparams->step;
+			return;
+		}
+		clkparams++;
 	}
-	if (baud == 250000 || baud == 230400) {
-		*scale = 0x0017;
-		*step  = 0x7AE0;
-		return;
-	}
-	if (baud == 500000) {
-		*scale = 0x000B;
-		*step  = 0x7AE0;
-		return;
-	}
-#endif
+
+	/* If baudrate was not found by the previous loop, compute scale
+	 * and step */
 
 	*scale = 0;
 	*step = 0;
@@ -274,7 +271,7 @@ static void ar933x_uart_set_termios(struct uart_port *port,
 	new->c_cflag &= ~CMSPAR;
 
 	baud = uart_get_baud_rate(port, new, old, up->min_baud, up->max_baud);
-	ar933x_uart_get_scale_step(port->uartclk, baud, &scale, &step);
+	ar933x_uart_get_scale_step(up, baud, &scale, &step);
 
 	/*
 	 * Ok, we're now changing the port state. Do it with
@@ -711,6 +708,8 @@ static int __devinit ar933x_uart_probe(struct platform_device *pdev)
 
 	baud = ar933x_uart_get_baud(port->uartclk, 0, AR933X_UART_MAX_STEP);
 	up->max_baud = min_t(unsigned int, baud, AR933X_UART_MAX_BAUD);
+
+	up->clkparams = pdata->params;
 
 	ar933x_uart_add_console_port(up);
 

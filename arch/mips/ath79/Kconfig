@@ -742,6 +742,15 @@ config SOC_AR934X
 	select PCI_AR724X if PCI
 	def_bool n
 
+config TWEAK_UART_BAUDRATES_FOR_ATMEGA32U4
+	bool "Tweak baudrates for Atmega32U4 compatibility"
+	depends on SOC_AR934X || SOC_AR933X
+	help
+	  Say 'Y' if you want baudrates 230400 and 460800 be mapped
+	  to actual values 250000 and 500000. This is required if the
+	  chip is connected to an AVR Atmega32U4 chip, as it does not
+	  support 230400 nor 460800.
+
 config SOC_QCA955X
 	select USB_ARCH_HAS_EHCI
 	select HW_HAS_PCI
