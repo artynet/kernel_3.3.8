@@ -302,6 +302,14 @@ static void ar933x_uart_set_termios(struct uart_port *port,
 	ar933x_uart_rmw_set(up, AR933X_UART_CS_REG,
 			    AR933X_UART_CS_HOST_INT_EN);
 
+	/* enable TX ready override */
+	ar933x_uart_rmw_set(up, AR933X_UART_CS_REG,
+			AR933X_UART_CS_TX_READY_ORIDE);
+
+	/* enable RX ready override */
+	ar933x_uart_rmw_set(up, AR933X_UART_CS_REG,
+			AR933X_UART_CS_RX_READY_ORIDE);
+
 	/* reenable the UART */
 	ar933x_uart_rmw(up, AR933X_UART_CS_REG,
 		        AR933X_UART_CS_IF_MODE_M << AR933X_UART_CS_IF_MODE_S,
@@ -439,6 +447,10 @@ static int ar933x_uart_startup(struct uart_port *port)
 	/* Enable HOST interrupts */
 	ar933x_uart_rmw_set(up, AR933X_UART_CS_REG,
 			    AR933X_UART_CS_HOST_INT_EN);
+
+	/* enable TX ready override */
+	ar933x_uart_rmw_set(up, AR933X_UART_CS_REG,
+			AR933X_UART_CS_TX_READY_ORIDE);
 
 	/* Enable RX interrupts */
 	up->ier = AR933X_UART_INT_RX_VALID;
