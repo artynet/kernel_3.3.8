@@ -700,7 +700,7 @@ static int __devinit ar933x_uart_probe(struct platform_device *pdev)
 	port->uartclk = pdata->uartclk;
 
 	port->regshift = 2;
-	port->fifosize = AR933X_UART_FIFO_SIZE;
+	port->fifosize = pdata->fifosize;
 	port->ops = &ar933x_uart_ops;
 
 	baud = ar933x_uart_get_baud(port->uartclk, AR933X_UART_MAX_SCALE, 1);

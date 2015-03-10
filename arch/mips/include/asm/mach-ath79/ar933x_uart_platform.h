@@ -19,6 +19,7 @@ struct ar933x_uart_clk_params {
 
 struct ar933x_uart_platform_data {
 	unsigned	uartclk;
+	unsigned short fifosize;
 	struct ar933x_uart_clk_params *params;
 };
 
