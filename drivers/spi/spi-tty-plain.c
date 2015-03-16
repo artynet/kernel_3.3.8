@@ -27,8 +27,10 @@
 #define SPI_TTY_ENQUIRY 0x5
 #define SPI_TTY_ENQ_INT_MS 200
 #define SPI_TTY_MSG_LEN 64
-#define SPI_TTY_FREQ_HZ_RX 38400
+#define SPI_TTY_FREQ_HZ_RX 9600
 #define SPI_TTY_FREQ_HZ_TX 115200
+#define SPI_TTY_DELAY_US 25
+
 static unsigned int dev_count = 0;
 static spinlock_t lock;
 
@@ -147,6 +149,7 @@ static int __spi_serial_tty_write(struct spi_tty *stty,
 	t->len = len;
 	t->tx_buf = buf;
 	t->rx_buf = rx_buf;
+	t->delay_usecs = SPI_TTY_DELAY_US;
 	t->speed_hz = discard_rx ? SPI_TTY_FREQ_HZ_TX : SPI_TTY_FREQ_HZ_RX;
 
 	spi_message_add_tail(t, m);
