@@ -432,8 +432,8 @@ void __init ath79_gpio_init(void)
 		panic("cannot add AR71xx GPIO chip, error=%d", err);
 		return;
 	}
-	/* Irqs supported for ar933x only at the moment */
-	if (!soc_is_ar933x())
+	/* Irqs supported for ar933x and ar934x only at the moment */
+	if (!soc_is_ar933x() && !soc_is_ar934x())
 		return;
 
 	ath79_setup_irqs();
