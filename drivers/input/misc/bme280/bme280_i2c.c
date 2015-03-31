@@ -250,7 +250,10 @@ static void bme_i2c_shutdown(struct i2c_client *client)
 */
 static int bme_i2c_remove(struct i2c_client *client)
 {
-	return bme_remove(&client->dev);
+	int ret;
+	ret = bme_remove(&client->dev);
+	bme_i2c_client = NULL;
+	return ret;
 }
 
 #ifdef CONFIG_PM
