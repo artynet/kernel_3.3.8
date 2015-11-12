@@ -473,6 +473,10 @@ int mcuio_cancel_cb(struct mcuio_request *r)
 	if (!r->hc)
 		return -EINVAL;
 	data = dev_get_drvdata(&r->hc->dev);
+
+	if (!data)
+		return -EINVAL;
+
 	list_for_each_entry_safe(ptr, tmp, &data->pending_requests, list) {
 		if (ptr == r) {
 			mutex_lock(&data->lock);
