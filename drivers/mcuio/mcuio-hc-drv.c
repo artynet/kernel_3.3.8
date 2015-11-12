@@ -299,10 +299,16 @@ static int __read_message(struct mcuio_hc_data *data,
 					__get_available(map) >= count ||
 					kthread_should_stop());
 	/* FIXME: handle signals */
-	if (stat < 0 || kthread_should_stop()) {
+	if (stat < 0) {
 		pr_debug("%s returns %d\n", __func__, stat);
 		return stat;
 	}
+
+	if (kthread_should_stop()) {
+		pr_debug("%s kthread_should_stop\n", __func__);
+		return -EINTR;
+	}
+
 	for (i = 0; i < count; i++, ptr++) {
 		stat = regmap_read(map, MCUIO_HC_INBUF + i * sizeof(u32), ptr);
 		if (stat < 0) {
