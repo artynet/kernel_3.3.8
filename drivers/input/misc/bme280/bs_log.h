@@ -32,20 +32,19 @@
 #define LOG_LEVEL_D 7
 
 #ifndef LOG_LEVEL
-/*! LOG LEVEL DEFINATION */
-#define LOG_LEVEL LOG_LEVEL_I
+/*! LOG LEVEL DEFINITION */
+#define LOG_LEVEL LOG_LEVEL_N
 #endif
 
 #ifndef MODULE_TAG
-/*! MODULE TAG DEFINATION */
-#define MODULE_TAG "<BME280>"
+/*! MODULE TAG DEFINITION */
+#define MODULE_TAG "bme280: "
 #endif
 
 #if (LOG_LEVEL >= LOG_LEVEL_E)
 /*! print error message */
 #define PERR(fmt, args...) \
-	printk(KERN_INFO "\n" "[E]" KERN_ERR MODULE_TAG \
-	"<%s><%d>" fmt "\n", __func__, __LINE__, ##args)
+	printk(MODULE_TAG "[E] " fmt "\n", ##args)
 #else
 /*! invalid message */
 #define PERR(fmt, args...)
@@ -54,8 +53,8 @@
 #if (LOG_LEVEL >= LOG_LEVEL_N)
 /*! print notice message */
 #define PNOTICE(fmt, args...) \
-	printk(KERN_INFO "\n" "[N]" KERN_NOTICE MODULE_TAG \
-	"<%s><%d>" fmt "\n", __func__, __LINE__, ##args)
+	printk(MODULE_TAG "[N] " fmt "\n", ##args)
+
 #else
 /*! invalid message */
 #define PNOTICE(fmt, args...)
@@ -63,8 +62,8 @@
 
 #if (LOG_LEVEL >= LOG_LEVEL_I)
 /*! print information message */
-#define PINFO(fmt, args...) printk(KERN_INFO "\n" "[I]" KERN_INFO MODULE_TAG \
-	"<%s><%d>" fmt "\n", __func__, __LINE__, ##args)
+#define PINFO(fmt, args...) \
+	printk(MODULE_TAG "[I] " fmt "\n", ##args)
 #else
 /*! invalid message */
 #define PINFO(fmt, args...)
@@ -72,8 +71,9 @@
 
 #if (LOG_LEVEL >= LOG_LEVEL_D)
 /*! print debug message */
-#define PDEBUG(fmt, args...) printk(KERN_INFO "\n" "[D]" KERN_DEBUG MODULE_TAG \
-	"<%s><%d>" fmt "\n", __func__, __LINE__, ##args)
+#define PDEBUG(fmt, args...) \
+	printk(MODULE_TAG "[D] " "<%s><%d> " fmt "\n", \
+		__func__, __LINE__, ##args)
 #else
 /*! invalid message */
 #define PDEBUG(fmt, args...)
