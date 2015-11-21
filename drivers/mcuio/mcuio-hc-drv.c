@@ -714,6 +714,7 @@ static void __cleanup_outstanding_requests(struct mcuio_hc_data *data)
 		pr_debug("%s %d: freeing request %p\n", __func__,
 			 __LINE__, r);
 		cancel_delayed_work_sync(&r->to_work);
+		r->status = -ECANCELED;
 		if (r->cb)
 			r->cb(r);
 		__dequeue_request(r);

@@ -124,8 +124,9 @@ static void mcuio_soft_local_irq_controller_msg_wcb(struct mcuio_request *r)
 	fn = (r->offset - MCUIO_IRQ_TRIGGER) / sizeof(u32);
 
 	if ((fn < 0) || (fn >= MCUIO_FUNCS_PER_DEV)) {
-		dev_err(&slicm->mdev.dev, "UNHANDLED WRITE REQ TO 0x%04x\n",
-			r->offset);
+		if (r->status != -ECANCELED)
+			dev_err(&slicm->mdev.dev, "UNHANDLED WRITE REQ TO 0x%04x\n",
+				r->offset);
 		return;
 	}
 
