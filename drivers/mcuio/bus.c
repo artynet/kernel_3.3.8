@@ -54,7 +54,8 @@ static int mcuio_match_device(struct device *dev, struct device_driver *drv)
 		    mdev->id.vendor == id->vendor)
 			return 1;
 		/* Next try class match */
-		if (mdev->id.class == (id->class & id->class_mask))
+		if (id->class != MCUIO_CLASS_UNDEFINED &&
+			mdev->id.class == (id->class & id->class_mask))
 			return 1;
 	}
 	return 0;
