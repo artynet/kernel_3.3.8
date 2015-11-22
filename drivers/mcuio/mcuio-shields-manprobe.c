@@ -87,7 +87,8 @@ err0:
 
 void shld_unregister(struct shld_probe_info *info)
 {
-	mcuio_device_unregister(info->mdev);
+	if (!IS_ERR(mcuio_bus_find_hc(0)))
+		mcuio_device_unregister(info->mdev);
 	info->mdev = NULL;
 }
 
