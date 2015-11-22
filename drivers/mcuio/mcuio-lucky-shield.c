@@ -79,6 +79,7 @@ static int mcuio_lucky_probe(struct mcuio_device *mdev)
 {
 	struct mcuio_shld_i2c_info *i;
 	int cnt;
+	int ret;
 
 	struct mcuio_shld_data *data;
 
@@ -108,8 +109,20 @@ static int mcuio_lucky_probe(struct mcuio_device *mdev)
 	for (cnt = 0; cnt < data->i2c_cnt; cnt++) {
 		i = &data->i2c_info[cnt];
 		i->info.addr = *i->paddr;
-		i->info.irq = (i->gpio_irq >= 0) ?
-			gpio_to_irq(i->gpio_irq) : 0;
+
+		if (i->gpio_irq >= 0) {
+			/* HACK this is needed to enable pullup */
+			ret = devm_gpio_request_one(&mdev->dev, i->gpio_irq,
+				GPIOF_DIR_IN, "lucky-shield");
+			if (ret < 0)
+				return ret;
+			gpio_direction_output(i->gpio_irq, 1);
+			gpio_direction_input(i->gpio_irq);
+			devm_gpio_free(&mdev->dev, i->gpio_irq);
+			i->info.irq = gpio_to_irq(i->gpio_irq);
+		}
+		else
+			i->info.irq = 0;
 
 		i->i2c_client = i2c_new_device(data->i2c_adap, &i->info);
 
