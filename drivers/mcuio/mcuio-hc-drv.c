@@ -487,6 +487,10 @@ int mcuio_hc_set_irqs(struct mcuio_device *hc, unsigned dev, int __irqs[])
 		WARN_ON(1);
 		return -ENODEV;
 	}
+	if (dev > MCUIO_DEVS_PER_BUS) {
+		dev_warn(&hc->dev, "Invalid dev number %u\n", dev);
+		return -EINVAL;
+	}
 	irqs = devm_kzalloc(&hc->dev, size, GFP_KERNEL);
 	if (!irqs) {
 		dev_err(&hc->dev, "No memory for irqs for %u:%u\n", hc->bus,
