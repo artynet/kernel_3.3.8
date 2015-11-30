@@ -95,12 +95,13 @@ void shld_unregister(struct shld_probe_info *info)
 static int shld_probe(const char *shld_name)
 {
 	struct shld_probe_info *i;
-	for (i = shld_list; i->name; i++)
-		if (sysfs_streq(shld_name, i->name) && !i->probed) {
-			if (!shld_register(i))
+	for (i = shld_list; i->name; i++) {
+		if (sysfs_streq(shld_name, i->name) && !i->probed &&
+			!shld_register(i)) {
 				i->probed = 1;
-			return 0;
+				return 0;
 		}
+	}
 	return -EINVAL;
 }
 
