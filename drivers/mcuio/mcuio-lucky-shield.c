@@ -171,7 +171,6 @@ static int i2cdev_notifier_call(struct notifier_block *nb, unsigned long action,
 			 void *data)
 {
 	struct mcuio_shld_i2c_info *i;
-	struct i2c_client *c = to_i2c_client(data);
 	int cnt;
 
 	if (action == BUS_NOTIFY_DEL_DEVICE) {
