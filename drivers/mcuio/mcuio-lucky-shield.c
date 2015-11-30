@@ -52,7 +52,7 @@ module_param(sht21_addr, ushort, 0644);
 module_param(ssd1307_addr, ushort, 0644);
 module_param(mma8491_addr, ushort, 0644);
 module_param(mma8491_rst, uint, 0644);
-module_param(bme280_addr, uint, 0644);
+module_param(bme280_addr, ushort, 0644);
 
 static struct ssd1307_platform_data ssd1307_plat = {
 	.type = SSD1307_TYPE_1306,
