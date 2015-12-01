@@ -385,6 +385,7 @@ static int spi_tty_init(void)
 	spi_serial_tty_driver->type = TTY_DRIVER_TYPE_SERIAL;
 	spi_serial_tty_driver->subtype = SERIAL_TYPE_NORMAL;
 	spi_serial_tty_driver->flags = TTY_DRIVER_DYNAMIC_DEV;
+	spi_serial_tty_driver->init_termios = tty_std_termios;
 
 	tty_set_operations(spi_serial_tty_driver, &spi_serial_ops);
 	err = tty_register_driver(spi_serial_tty_driver);
