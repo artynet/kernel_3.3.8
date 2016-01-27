@@ -118,6 +118,7 @@ enum ath79_mach_type {
 	ATH79_MACH_ZCN_1523H_2,		/* Zcomax ZCN-1523H-2-xx */
 	ATH79_MACH_ZCN_1523H_5,		/* Zcomax ZCN-1523H-5-xx */
 	ATH79_MACH_LININO_YUN,		/* Linino Yun */
+	ATH79_MACH_LININO_YUN_MINI,		/* Linino Yun Mini */
 	ATH79_MACH_LININO_ONE,		/* Linino One */
 	ATH79_MACH_LININO_FREEDOG,	/* Linino Freedog */
 	ATH79_MACH_LININO_LEI,		/* Linino Lei */
