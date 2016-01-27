@@ -687,8 +687,8 @@ config ATH79_MACH_LININO_FREEDOG
 		Say 'Y' here if you want your kernel to support
 	 	Linino Freedog.
 
-config ATH79_MACH_LININO_CHOWCHOW
-	bool "Linino Chowchow support"
+config ATH79_MACH_LININO_LEI
+	bool "Linino Lei support"
 	select SOC_AR934X
 	select ATH79_DEV_ETH
 	select ATH79_DEV_GPIO_BUTTONS
@@ -698,7 +698,7 @@ config ATH79_MACH_LININO_CHOWCHOW
 	select ATH79_DEV_WMAC
 	help
 		Say 'Y' here if you want your kernel to support
-		Linino Chowchow.
+		Linino Lei.
 
 config ATH79_MACH_LININO_CHIWAWA
 	bool "Linino Chiwawa support"
