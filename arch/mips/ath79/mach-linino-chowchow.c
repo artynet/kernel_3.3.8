@@ -34,16 +34,17 @@
 #include "linux/gpio.h"
 #include <linux/spi/spi_gpio.h>
 
-#define CHOWCHOW_GPIO_MCU_RESET	0
+#define CHOWCHOW_GPIO_MCU_RESET	17
 #define CHOWCHOW_GPIO_LED0		12
 #define CHOWCHOW_GPIO_LED1		11
 
-#define CHOWCHOW_GPIO_UART0_RX	13
-#define CHOWCHOW_GPIO_UART0_TX	14
+//#define CHOWCHOW_GPIO_UART0_RX	13
+//#define CHOWCHOW_GPIO_UART0_TX	14
 #define CHOWCHOW_GPIO_UART1_RX	9
 #define CHOWCHOW_GPIO_UART1_TX	10
-#define CHOWCHOW_GPIO_OE2		15
-#define CHOWCHOW_GPIO_CONF_BTN	17
+#define CHOWCHOW_GPIO_OE_UART	15
+#define CHOWCHOW_GPIO_OE_SPI   14
+#define CHOWCHOW_GPIO_CONF_BTN	0
 #define CHOWCHOW_GPIO_UART_POL	GPIOF_OUT_INIT_LOW
 
 #define	CHOWCHOW_GPIO_SPI_SCK	4
@@ -53,6 +54,8 @@
 
 #define AR934X_GPIO_UART1_TD_OUT	79	/* table 2.16 */
 #define AR934X_GPIO_UART0_SOUT	24	/* table 2.16 */
+
+#define _USE_UART0_PINS_AS_GPIO_
 
 #define CHOWCHOW_GPIO_SPI_INTERRUPT	16
 #define DS_PCIE_CALDATA_OFFSET	0x5000
@@ -155,7 +158,7 @@ static void ds_register_spi(void) {
 	pr_info("mach-linino: enabling GPIO SPI Controller");
 
 	/* Enable level shifter on SPI signals */
-	gpio_set_value(CHOWCHOW_GPIO_OE2, 1);
+	gpio_set_value(CHOWCHOW_GPIO_OE_SPI, 0);
 	/* Register SPI devices */
 	spi_register_board_info(linino_spi_info, ARRAY_SIZE(linino_spi_info));
 	/* Register GPIO SPI controller */
@@ -169,12 +172,17 @@ static void __init ds_setup_level_shifter_oe(void)
 {
 	int err;
 
-	/* enable OE2 of level shifter */
-    pr_info("Setting GPIO OE %d\n", CHOWCHOW_GPIO_OE2);
-    err= gpio_request_one(CHOWCHOW_GPIO_OE2,
-			GPIOF_OUT_INIT_LOW | GPIOF_EXPORT_DIR_FIXED, "OE");
+	/* enable UART OE level shifter */
+    	err= gpio_request_one(CHOWCHOW_GPIO_OE_UART,
+			GPIOF_OUT_INIT_LOW | GPIOF_EXPORT_DIR_FIXED, "OE_UART");
 	if (err)
-		pr_err("mach-linino: error setting GPIO OE\n");
+		pr_err("mach-linino: error setting GPIO OE UART\n");
+
+	/* enable SPI OE level shifter */
+    	err= gpio_request_one(CHOWCHOW_GPIO_OE_SPI,
+			GPIOF_OUT_INIT_LOW | GPIOF_EXPORT_DIR_FIXED, "OE_SPI");
+	if (err)
+		pr_err("mach-linino: error setting GPIO OE SPI\n");
 }
 
 
@@ -227,6 +235,7 @@ static void __init chowchow_setup(void)
 	v |= (CHOWCHOW_GPIO_UART1_RX << 16);
 	__raw_writel(v, reg);
 
+#ifndef _USE_UART0_PINS_AS_GPIO_
 	/* UART0 (low-speed) configuration */
 	r = gpio_request(CHOWCHOW_GPIO_UART0_TX, NULL);
 	if (r) {
@@ -246,6 +255,7 @@ static void __init chowchow_setup(void)
 	v &= ~0x0000ff00;
 	v |= (CHOWCHOW_GPIO_UART0_RX << 8);
 	__raw_writel(v, reg);
+#endif
 
 	ath79_register_m25p80(NULL);
 
@@ -257,19 +267,23 @@ static void __init chowchow_setup(void)
 	pr_info("mach-linino: enabling USB Controller");
 	ath79_register_usb();
 
-	ath79_init_mac(mac, art + DS_WMAC_MAC_OFFSET, -1);
+	ath79_init_mac(mac, art + DS_WMAC_MAC_OFFSET, 0);
+	// mac[3] |= 0x08;
+	mac[3] &= 0xF7;
 	ath79_register_wmac(art + DS_CALDATA_OFFSET, mac);
+	pr_info("%s-%d: wlan0 MAC:%02x:%02x:%02x:%02x:%02x:%02x\n", __FUNCTION__, __LINE__, mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 
-	ath79_init_mac(mac, art + DS_WMAC_MAC_OFFSET, -2);
+	// mac[3] &= 0xF7;
+	mac[3] |= 0x08;
+	pr_info("%s-%d: eth0  MAC:%02x:%02x:%02x:%02x:%02x:%02x\n", __FUNCTION__, __LINE__, mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 	ap91_pci_init(art + DS_PCIE_CALDATA_OFFSET, mac);
+	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 0);
 
 	ath79_setup_ar934x_eth_cfg(AR934X_ETH_CFG_RGMII_GMAC0 |
 				   AR934X_ETH_CFG_SW_ONLY_MODE);
 
 	ath79_register_mdio(1, 0x0);
 	ath79_register_mdio(0, 0x0);
-
-	ath79_init_mac(ath79_eth0_data.mac_addr, art + DS_WMAC_MAC_OFFSET, -2);
 
 	mdiobus_register_board_info(db120_mdio0_info,
 				    ARRAY_SIZE(db120_mdio0_info));
