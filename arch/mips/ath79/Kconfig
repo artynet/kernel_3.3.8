@@ -701,7 +701,7 @@ config ATH79_MACH_LININO_FREEDOG
 	 	Linino Freedog.
 
 config ATH79_MACH_LININO_LEI
-	bool "Linino Lei support"
+	bool "Arduino Lei support"
 	select SOC_AR934X
 	select ATH79_DEV_ETH
 	select ATH79_DEV_GPIO_BUTTONS
@@ -714,7 +714,7 @@ config ATH79_MACH_LININO_LEI
 		Linino Lei.
 
 config ATH79_MACH_LININO_CHIWAWA
-	bool "Linino Chiwawa support"
+	bool "Arduino Chiwawa support"
 	select SOC_AR933X
 	select ATH79_DEV_ETH
 	select ATH79_DEV_GPIO_BUTTONS
